@@ -1,0 +1,19 @@
+UPPGIFTEN!
+
+Ni ska skapa ett enklare REST API med en mySQL-databas som ska fungera som backend för en framtida foto-app.
+
+En användare ska bara kunna se sina egna album och foton, och enbart kunna lägga till sina egna foton i sina egna album.
+
+- Följa REST
+- MVC-strukturerad
+- Använda Bookshelf som ORM
+- Autentisering via HTTP Basic (om man ej gör VG-uppgiften att använda JWT-tokens)
+- Hashing/salting av lösenord via bcrypt
+- Validering av samtlig data en användare kan skicka in
+- Alla svar ska vara wrappade enligt JSend-specifikationen (det gör vi i controllers - res.send - att det skickas en status (success, fail, error) + data (med payload/message))
+- Alla förfrågningar och svar ska följa för varje ändpunkt angiven struktur. Requests and results, endpoint. Johans dokument.
+- Felhantering (t.ex. om användaren försöker komma åt en annan användares album eller foton, eller om     användaren försöker lägga till ett foto som inte tillhör användaren i ett album, eller lägga till ett foto i ett album som inte finns). = Appen ska inte crasha.
+- Använda korrekta HTTP-statuskoder (404, 200 etc)
+- Självklart vara versionshanterad med hjälp av git
+- All källkod vara korrekt indenterad
+- Deploy:ad till Heroku
