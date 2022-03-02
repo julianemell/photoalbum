@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const registerController = require('../controllers/register_controller');
 //const auth = require('../middlewares/auth');
-//const userValidationRules = require('../validation/user');
+const userValidationRules = require('../validation/user');
 
 
 
-/* GET / */
-router.get('/', (req, res) => {
+//GET /
+router.get('/', (req, res, next) => {
 	res.send({ 
 		success: true, 
 		data: { msg: 'oh, hi' }
@@ -19,6 +19,6 @@ router.use('/albums', require('./albums'));
 router.use('/photos', require('./photos'));
 
 //POST
-router.post('/register', /* userValidationRules.createRules, */ registerController.register);
+router.post('/register', userValidationRules.createRules, registerController.register);
 
 module.exports = router;

@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const debug = require('debug')('photoalbum:register_controller');
 const { matchedData, validationResult } = require('express-validator');
 const models = require('../models');
+
  
  /**
   * Register a new user
@@ -28,6 +29,7 @@ const register = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(validData.password, 10);
         validData.password = hashedPassword;
+        console.log("The hashed password data:", hashedPassword);
         
     } catch (error) {
         res.status(500).send({
@@ -38,7 +40,7 @@ const register = async (req, res) => {
     }
  
     try {
-        const user = await new models.User(validData).save();
+        const user = await new models.Profile(validData).save();
         debug("Created new user successfully: %O", user);
  
         res.send({

@@ -1,3 +1,5 @@
+//för att starta upp bookshelf(knex)
+
 require('dotenv').config();
 
 // Setting up the database connection
@@ -5,8 +7,8 @@ const knex = require('knex')({
 	debug: true,
 	client: 'mysql',
 	connection: {
-		host: process.env.DB_HOST,
-		port: process.env.DB_PORT,
+		host: process.env.DB_HOST || 'localhost',
+		port: process.env.DB_PORT || 3306,
 		charset: process.env.DB_CHARSET,
 		database: process.env.DB_NAME,
 		user: process.env.DB_USER,

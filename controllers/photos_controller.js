@@ -3,7 +3,7 @@ const models = require('../models');
 const { matchedData, validationResult } = require('express-validator');
 
 /**
- * Get all photos profile
+ * Get all photos
  * GET /
  */
 const getPhotos = async (req, res) => {
@@ -28,8 +28,10 @@ const getPhotos = async (req, res) => {
 
 	res.send({
 		status: 'success',
-		data: photo,
-	});
+		data: {
+			photo,
+		}
+	});	
 }
 
 

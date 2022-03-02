@@ -6,7 +6,7 @@ const { matchedData, validationResult } = require('express-validator');
  * Get user profile
  * GET /
  */
-const getProfile = async (req, res) => {
+const getUser = async (req, res) => {
 	//get the auth user 
 	//and return it
 	console.log("hello", req.user);
@@ -66,6 +66,6 @@ const addPhoto = async (req, res) => {
 }
 
 module.exports = {
-    getProfile,
+    getUser,
 	addPhoto,
 }

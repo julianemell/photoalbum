@@ -4,16 +4,16 @@ const profileController = require('../controllers/profile_controller');
 //const profileValidationRules = require('../validation/profile');
 
 /* Get all resources */
-router.get('/', profileController.getProfile);
+router.get('/', profileController.getUser);
 
 /* Get a specific resource */
-//router.get('/:userId', profileController.show);
+//router.get('/:userId', profileController.showUser);
 
 /* Store a new resource */
-//router.post('/', profileValidationRules.createRules, profileController.store);
+//router.post('/', profileValidationRules.createRules, profileController.storeUser);
 
 /* Update a specific resource */
-//router.put('/:exampleId', profileValidationRules.updateRules, profileController.update);
+//router.put('/:exampleId', profileValidationRules.updateRules, profileController.updateUser);
 
 /* Destroy a specific resource */
 //router.delete('/:exampleId', profileController.destroy);

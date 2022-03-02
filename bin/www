@@ -2,6 +2,7 @@
 
 /**
  * Module dependencies.
+ * Här startas servern.
  */
 
 require('dotenv').config();

@@ -9,11 +9,11 @@ const app = express();
 
 // middlewares
 app.use(logger('dev'));
-app.use(cors());
-app.use(express.json());
+app.use(cors()); //så att andra tjänster kan använda detta api
+app.use(express.json()); //tolka jsondata
 app.use(express.urlencoded({ extended: false }));
 
-// routes
+// routes (använd alla routes som finns i routes-mappen)
 app.use(require('./routes'));
 
 module.exports = app;

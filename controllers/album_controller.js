@@ -3,31 +3,27 @@ const models = require('../models');
 const { matchedData, validationResult } = require('express-validator');
 
 /**
- * Get user profile
+ * Get all albums
  * GET /
  */
 const getAlbum = async (req, res) => {
-	//get the auth user 
-	//and return it
-	console.log("hello", req.user);
+	const all_albums = await models.Album.fetchAll();
 
 	res.send({
 		status: 'success',
 		data: {
-			users: req.user,
+			album: all_albums,
 		}
 	});
 }
 
 
 /**
- * Get a specific photo
- *
- * GET /:photosId
+ * Get a specific album
+ * GET /:albumId
  */
  const showAlbum = async (req, res) => {
-	const album = await new models.Album({ id: req.params.albumId })
-		.fetch();
+	const album = await new models.Album({ id: req.params.albumId }).fetch({ withRelated: ['photos'] }); //albumid kommer från routeparametern
 
 	res.send({
 		status: 'success',
@@ -37,7 +33,7 @@ const getAlbum = async (req, res) => {
 
 
 /**
- * Store a new photo
+ * Store a new album
  *
  * POST /
  */
@@ -70,15 +66,15 @@ const getAlbum = async (req, res) => {
 }
 
 /**
- * Update a specific photo
+ * Update a specific album
  *
- * PUT /:photosId
+ * PUT /:albumId
  */
  const updateAlbum = async (req, res) => {
 	const albumId = req.params.photosId;
 
-	// make sure example exists
-	const album = await new models.Photos({ id: albumId }).fetch({ require: false });
+	// make sure album exists
+	const album = await new models.Album({ id: albumId }).fetch({ require: false });
 	if (!album) {
 		debug("Album to update was not found. %o", { id: albumId });
 		res.status(404).send({
@@ -118,4 +114,7 @@ const getAlbum = async (req, res) => {
 
 module.exports = {
     getAlbum,
+	showAlbum,
+	storeAlbum,
+	updateAlbum,
 }
