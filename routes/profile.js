@@ -1,21 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const profileController = require('../controllers/profile_controller');
-//const profileValidationRules = require('../validation/profile');
+const profileValidationRules = require('../validation/profile');
 
-/* Get all resources */
-router.get('/', profileController.getUser);
+//get auth users profile
+router.get('/', profileController.getProfile);
 
-/* Get a specific resource */
-//router.get('/:userId', profileController.showUser);
+router.put('/', profileValidationRules.updateRules, profileController.updateProfile);
 
-/* Store a new resource */
-//router.post('/', profileValidationRules.createRules, profileController.storeUser);
+router.get('/albums', profileController.getAlbums);
+router.get('/photos', profileController.getPhotos);
 
-/* Update a specific resource */
-//router.put('/:exampleId', profileValidationRules.updateRules, profileController.updateUser);
-
-/* Destroy a specific resource */
-//router.delete('/:exampleId', profileController.destroy);
 
 module.exports = router;

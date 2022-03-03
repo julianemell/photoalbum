@@ -16,7 +16,7 @@ const updateRules = [
     body('last_name').optional().isLength({min: 2}),
 ];
 
-module.exports = { //dessa nås i userValidationRules i routes/users
+module.exports = { //dessa nås i userValidationRules i routes/profile
     createRules,
     updateRules
 }

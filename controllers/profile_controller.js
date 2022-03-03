@@ -1,21 +1,88 @@
 const debug = require('debug')('photoalbum:profile_controller');
-const models = require('../models');
+const models = require('../models/User');
 const { matchedData, validationResult } = require('express-validator');
 
 /**
  * Get user profile
  * GET /
  */
-const getUser = async (req, res) => {
-	//get the auth user 
-	//and return it
-	console.log("hello", req.user);
+const getProfile = async (req, res) => {
+	try {
+		const user = await User.fetchById(req.user.user_id);
+		res.send({
+			status: 'success',
+			data: {
+				user,
+			}
+		});
+	} catch (error) {
+		return res.sendStatus(404);
+	}
+}
 
-	res.send({
+
+const updateProfile = async (req, res) => {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).send({ status: 'fail', data: errors.array() });
+	}
+
+	// get only the validated data from the request
+	const validData = matchedData(req);
+
+	// update the user's password, but only if they sent us a new password
+	if (validData.password) {
+		try {
+			validData.password = await bcrypt.hash(validData.password, models.User.hashSaltRounds); //saltat 10 ggr
+
+		} catch (error) {
+			res.status(500).send({
+				status: 'error',
+				message: 'Exception thrown when hashing the password.',
+			});
+			throw error;
+		}
+	}
+
+	try {
+		const updatedUser = await req.user.save(validData);
+		debug("Updated user successfully: %O", updatedUser);
+
+		res.send({
+			status: 'success',
+			data: {
+				user: updatedUser,
+			},
+		});
+
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when updating a new user.',
+		});
+		throw error;
+	}
+}
+
+const getAlbums = async (req, res) => {
+	await req.user.load('album');
+ 
+	res.status(200).send({
 		status: 'success',
 		data: {
-			users: req.user,
-		}
+			books: req.user.related('album'),
+		},
+	});
+}
+
+const getPhotos = async (req, res) => {
+	await req.user.load('photos');
+ 
+	res.status(200).send({
+		status: 'success',
+		data: {
+			books: req.user.related('photos'),
+		},
 	});
 }
 
@@ -66,6 +133,9 @@ const addPhoto = async (req, res) => {
 }
 
 module.exports = {
-    getUser,
+    getProfile,
+	updateProfile,
+	getAlbums,
+	getPhotos,
 	addPhoto,
 }

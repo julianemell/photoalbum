@@ -23,7 +23,7 @@ const getAlbum = async (req, res) => {
  * GET /:albumId
  */
  const showAlbum = async (req, res) => {
-	const album = await new models.Album({ id: req.params.albumId }).fetch({ withRelated: ['photos'] }); //albumid kommer från routeparametern
+	const album = await new models.Album({ id: req.params.albumId }).fetch(/* { withRelated: ['photos'] } */); //albumid kommer från routeparametern
 
 	res.send({
 		status: 'success',

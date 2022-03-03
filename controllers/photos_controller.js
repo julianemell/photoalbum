@@ -1,5 +1,5 @@
 const debug = require('debug')('photoalbum:photos_controller');
-const models = require('../models');
+const models = require('../models/Photos');
 const { matchedData, validationResult } = require('express-validator');
 
 /**
