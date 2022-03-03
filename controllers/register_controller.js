@@ -22,8 +22,6 @@ const register = async (req, res) => {
     // get only the validated data from the request
     const validData = matchedData(req);
  
-    console.log("The validated data:", validData);
- 
     // generate a hash of `validData.password`
     // and overwrite `validData.password` with the generated hash
     try {

@@ -7,17 +7,12 @@ const { matchedData, validationResult } = require('express-validator');
  * GET /
  */
 const getProfile = async (req, res) => {
-	try {
-		const user = await User.fetchById(req.user.user_id);
-		res.send({
-			status: 'success',
-			data: {
-				user,
-			}
-		});
-	} catch (error) {
-		return res.sendStatus(404);
-	}
+	res.send({
+		status: 'success',
+		data: {
+			user: req.user,
+		}
+	});
 }
 
 

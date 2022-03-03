@@ -2,6 +2,7 @@
  * Profile model
  */
 
+
 module.exports = (bookshelf) => {
 	return bookshelf.model('User', {
 		tableName: 'Users',
@@ -10,6 +11,6 @@ module.exports = (bookshelf) => {
 		},
 		albums() {
 			return this.hasMany('Album');
-		},
+		}
 	});
 };

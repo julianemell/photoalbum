@@ -62,7 +62,7 @@ const getPhotos = async (req, res) => {
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when creating a new example.',
+			message: 'Exception thrown in database when creating a new photo.',
 		});
 		throw error;
 	}

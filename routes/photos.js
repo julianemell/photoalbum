@@ -7,12 +7,12 @@ const photosValidationRules = require('../validation/photo');
 router.get('/', photosController.getPhotos);
 
 /* Get a specific resource */
-router.get('/:photosId', photosController.showPhoto);
+router.get('/:photoId', photosController.showPhoto);
 
 /* Store a new resource */
 router.post('/', photosValidationRules.createRules, photosController.storePhoto);
 
 /* Update a specific resource */
-router.put('/:photosId', photosValidationRules.updateRules, photosController.updatePhoto);
+router.put('/:photoId', photosValidationRules.updateRules, photosController.updatePhoto);
 
 module.exports = router;
