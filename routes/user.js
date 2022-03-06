@@ -1,7 +1,9 @@
-const express = require('express');
+/* const express = require('express');
 const router = express.Router();
-const profileController = require('../controllers/profile_controller');
-const profileValidationRules = require('../validation/profile');
+const profileController = require('../controllers/user_controller');
+const profileValidationRules = require('../validation/user');
+const photosValidationRules = require('../validation/photo');
+
 
 //get auth users profile
 router.get('/', profileController.getProfile);
@@ -10,6 +12,8 @@ router.put('/', profileValidationRules.updateRules, profileController.updateProf
 
 router.get('/albums', profileController.getAlbums);
 router.get('/photos', profileController.getPhotos);
+//router.post('/', photosValidationRules.createRules, profileController.addPhoto);
 
 
 module.exports = router;
+ */

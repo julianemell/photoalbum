@@ -1,4 +1,4 @@
-const debug = require('debug')('photoalbum:profile_controller');
+const debug = require('debug')('photoalbum:user_controller');
 const models = require('../models/User');
 const { matchedData, validationResult } = require('express-validator');
 
@@ -6,16 +6,17 @@ const { matchedData, validationResult } = require('express-validator');
  * Get user profile
  * GET /
  */
-const getProfile = async (req, res) => {
+/* const getProfile = async (req, res) => {
 	res.send({
 		status: 'success',
-		data: {
-			user: req.user,
+		data: { //visa endast name och username
+			name: req.user.get('first_name') + ' ' + req.user.get('last_name'),
+			username: req.user.get('email'),
 		}
 	});
 }
-
-
+ */
+/* 
 const updateProfile = async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -28,7 +29,7 @@ const updateProfile = async (req, res) => {
 	// update the user's password, but only if they sent us a new password
 	if (validData.password) {
 		try {
-			validData.password = await bcrypt.hash(validData.password, models.User.hashSaltRounds); //saltat 10 ggr
+			validData.password = await bcrypt.hash(validData.password, models.User, 10); //saltat 10 ggr
 
 		} catch (error) {
 			res.status(500).send({
@@ -58,7 +59,7 @@ const updateProfile = async (req, res) => {
 		throw error;
 	}
 }
-
+ */
 const getAlbums = async (req, res) => {
 	await req.user.load('album');
  
@@ -129,7 +130,7 @@ const addPhoto = async (req, res) => {
 
 module.exports = {
     getProfile,
-	updateProfile,
+	/* updateProfile, */
 	getAlbums,
 	getPhotos,
 	addPhoto,

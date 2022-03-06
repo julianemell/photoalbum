@@ -38,14 +38,15 @@ const register = async (req, res) => {
     }
  
     try {
-        const user = await new models.Profile(validData).save();
+        const user = await new models.User(validData).save();
         debug("Created new user successfully: %O", user);
  
         res.send({
             status: 'success',
-            data: {
-                user,
-            },
+            data: { //visa endast name och username
+                name: user.get('first_name') + ' ' + user.get('last_name'),
+                username: user.get('email'),
+            }
         });
 
     } catch (error) {

@@ -1,5 +1,5 @@
 const debug = require('debug')('photoalbum:photos_controller');
-const models = require('../models/Photos');
+const models = require('../models');
 const { matchedData, validationResult } = require('express-validator');
 
 /**
@@ -23,7 +23,7 @@ const getPhotos = async (req, res) => {
  * GET /:photosId
  */
  const showPhoto = async (req, res) => {
-	const photo = await new models.Photos({ id: req.params.photosId })
+	const photo = await new models.Photo({ id: req.params.photosId })
 		.fetch();
 
 	res.send({
@@ -77,7 +77,7 @@ const getPhotos = async (req, res) => {
 	const photosId = req.params.photosId;
 
 	// make sure example exists
-	const photo = await new models.Photos({ id: photosId }).fetch({ require: false });
+	const photo = await new models.Photo({ id: photosId }).fetch({ require: false });
 	if (!photo) {
 		debug("Photo to update was not found. %o", { id: photosId });
 		res.status(404).send({

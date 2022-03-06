@@ -47,6 +47,9 @@ const getAlbum = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
+	//
+	validData.user_id = req.user.get('id');
+
 	try {
 		const album = await new models.Album(validData).save();
 		debug("Created new album successfully: %O", album);

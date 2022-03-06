@@ -19,7 +19,7 @@ const basic = async (req, res, next) => {
     debug("Authorization header: %o", req.headers.authorization);
 
     const [authSchema, base64Payload] = req.headers.authorization.split(' ');
- 
+
     if (authSchema.toLowerCase() !== "basic") {
         debug("Authorization schema isn't basic");
  
