@@ -48,34 +48,27 @@ res.status(200).send({
  * GET /:albumId
  */
 const showAlbum = async (req, res) => {
-	try{
-		//get album and related photo wher user_id == req.user.data.id
-		const album = await new Album({
-				id: req.params.albumId,
-				user_id: req.user.id
-			})
-			.fetch({ 
-				require: false,
-				withRelated: ['photos'],
-			})
+	try {
+		const validData = matchedData(req);
+		validData.user_id = req.user.get('id');
+		const album = await new Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
 
 		if(!album) {
-			res.status(404).send({
+			res.send({
 				status: 'fail',
-				data: 'Cant find requested album'
+				data: 'cant find album'
 			})
-			return;
+			return;	
 		}
 		res.send({
 			status: 'success',
-			data: album.toJSON({ omitPivot: true }), //remove __pivot__
+			data: album,
 		})
-
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exeption thrown when trying to get album form database'
-		})
+			message: 'Exception thrown in database when trying to show album.',
+		});
 		throw error;
 	}
 }

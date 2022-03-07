@@ -7,8 +7,6 @@ module.exports = (bookshelf) => {
 		tableName: 'Photos',
 		initialize() {
 			this.on('destroying', (model) => {
-			  // This is fired before a model is destroyed
-			  // detach photo from albums
 			   model.albums().detach();
 			})
 		},
