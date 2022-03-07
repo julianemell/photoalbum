@@ -42,16 +42,28 @@ const getPhotos = async (req, res) => {
  *
  * GET /:photosId
  */
- const showPhoto = async (req, res) => {
-	const photo = await new models.Photo({ id: req.params.photosId })
-		.fetch();
+const showPhoto = async (req, res) => {
+	try {
+		const photo = await new Photos({ id: req.params.photosId, user_id: req.user.id }).fetch({ require: false });
 
-	res.send({
-		status: 'success',
-		data: {
-			photo,
+		if(!photo) {
+			res.send({
+				status: 'fail',
+				data: 'cant find photo'
+			})
+			return;	
 		}
-	});	
+		res.send({
+			status: 'success',
+			data: photo,
+		})
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when adding a photo to a user.',
+		});
+		throw error;
+	}
 }
 
 
