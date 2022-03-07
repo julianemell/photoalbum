@@ -8,8 +8,16 @@ const { matchedData, validationResult } = require('express-validator');
  */
 const getPhotos = async (req, res) => {
 	console.log('inloggad användares id:', req.user.id);
-	const user = await User.fetchAll(req.user.id, { withRelated: ['photos'] });
+
+	const validData = matchedData(req);
+	validData.user_id = req.user.get('id');
+
+	console.log('inloggad användares id igen:', validData.user_id);
+
+
+	const user = await User.fetchById(validData.user_id);
 	//const all_photos = await Photos.fetchAll();
+	console.log('hur ser usern ut:', user.related('photos'));
 	
 	try {
 		const photos = user.related('photos');
@@ -44,7 +52,10 @@ const getPhotos = async (req, res) => {
  */
 const showPhoto = async (req, res) => {
 	try {
-		const photo = await new Photos({ id: req.params.photosId, user_id: req.user.id }).fetch({ require: false });
+		const validData = matchedData(req);
+		validData.user_id = req.user.get('id');
+		console.log('är detta fotots id?:', req.params.photoId)
+		const photo = await new Photos({ id: req.params.photoId, user_id: validData.user_id }).fetch({ require: false });
 
 		if(!photo) {
 			res.send({
@@ -60,7 +71,7 @@ const showPhoto = async (req, res) => {
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when adding a photo to a user.',
+			message: 'Exception thrown in database when trying to show photo.',
 		});
 		throw error;
 	}
