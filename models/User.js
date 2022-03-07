@@ -12,5 +12,8 @@ module.exports = (bookshelf) => {
 		albums() {
 			return this.hasMany('Album');
 		}
+	}, { fetchById(id, fetchOptions = {}) {
+		return new this({ id }).fetch(fetchOptions);
+		}
 	});
-};
+}

@@ -1,5 +1,5 @@
 const debug = require('debug')('photoalbum:photos_controller');
-const models = require('../models');
+const { User, Photos } = require('../models');
 const { matchedData, validationResult } = require('express-validator');
 
 /**
@@ -7,6 +7,25 @@ const { matchedData, validationResult } = require('express-validator');
  * GET /
  */
 const getPhotos = async (req, res) => {
+	console.log('inloggad användares id:', req.user.id);
+	const user = await User.fetchAll(req.user.id, { withRelated: ['photos'] });
+	//const all_photos = await Photos.fetchAll();
+	
+	try {
+		const photos = user.related('photos');
+		res.status(200).send({
+			status: 'success',
+			data: photos
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when getting the photos.',
+		});
+
+		throw error;
+	}
+/* 
 	const all_photos = await models.Photos.fetchAll();
 
 	res.send({
@@ -15,6 +34,7 @@ const getPhotos = async (req, res) => {
 			photos: all_photos,
 		}
 	});
+	 */
 }
 
 /**
@@ -40,7 +60,9 @@ const getPhotos = async (req, res) => {
  *
  * POST /
  */
- const storePhoto = async (req, res) => {
+
+//eller ska denna vara i album_controller?
+const storePhoto = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -50,24 +72,40 @@ const getPhotos = async (req, res) => {
 	// get only the validated data from the request
 	const validData = matchedData(req);
 
+	// lazy-load book relationship
+	await req.user.load('photos');
+
+	// get the user's books
+	const photos = req.user.related('photos');
+
+	// check if book is already in the user's list of books
+	const existing_photo = photos.find(photo => photo.id == validData.photo_id);
+
+	// if it already exists, bail
+	if (existing_photo) {
+		return res.send({
+			status: 'fail',
+			data: 'Photo already exists.',
+		});
+	}
+
 	try {
-		const photo = await new models.Photos(validData).save();
-		debug("Created new photo successfully: %O", photo);
+		const result = await req.user.photos().attach(validData.photo_id);
+		debug("Added photo to user successfully: %O", result);
 
 		res.send({
 			status: 'success',
-			data: photo,
+			data: null,
 		});
 
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when creating a new photo.',
+			message: 'Exception thrown in database when adding a photo to a user.',
 		});
 		throw error;
 	}
 }
-
 /**
  * Update a specific photo
  *

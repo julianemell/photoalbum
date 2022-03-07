@@ -1,34 +1,83 @@
 const debug = require('debug')('photoalbum:album_controller');
-const models = require('../models');
+const { Album, User } = require('../models');
 const { matchedData, validationResult } = require('express-validator');
 
 /**
  * Get all albums
  * GET /
  */
-const getAlbum = async (req, res) => {
-	const all_albums = await models.Album.fetchAll();
+const getAlbums = async (req, res) => {
+	const user = await User({ id: req.params.usersId }).fetch( { withRelated: ['albums'] });
 
-	res.send({
-		status: 'success',
-		data: {
-			album: all_albums,
-		}
-	});
-}
+	//const user = await User.fetchById(req.users.user_id, { withRelated: ['albums'] });
+	//const all_albums = await models.Album.fetchAll();
+	
+	try {
+		const albums = user.related('albums');
+		res.status(200).send({
+			status: 'success',
+			data: albums
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when getting the albums.',
+		});
+
+		throw error;
+	}
+}	
+/* // get only the validated data from the request
+const validData = matchedData(req);
+
+validData.userId = req.user.get('id');
+
+//await req.user.load(['albums']);
+const usersAlbums = await new models.Album(validData).save();
+
+res.status(200).send({
+	status: 'success',
+	data: {
+		album: user.related,
+	},
+}); */
 
 
 /**
  * Get a specific album
  * GET /:albumId
  */
- const showAlbum = async (req, res) => {
-	const album = await new models.Album({ id: req.params.albumId }).fetch({ withRelated: ['photos'] });
+const showAlbum = async (req, res) => {
+	try{
+		//get album and related photo wher user_id == req.user.data.id
+		const album = await new Album({
+				id: req.params.albumId,
+				user_id: req.user.id
+			})
+			.fetch({ 
+				require: false,
+				withRelated: ['photos'],
+			})
 
-	res.send({
-		status: 'success',
-		data: album,
-	});
+		if(!album) {
+			res.status(404).send({
+				status: 'fail',
+				data: 'Cant find requested album'
+			})
+			return;
+		}
+		res.send({
+			status: 'success',
+			data: album.toJSON({ omitPivot: true }), //remove __pivot__
+		})
+
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exeption thrown when trying to get album form database'
+		})
+		throw error;
+	}
 }
 
 
@@ -48,7 +97,9 @@ const getAlbum = async (req, res) => {
 	const validData = matchedData(req);
 
 	//
-	validData.user_id = req.user.get('id');
+	validData.user_id = req.user.get('id'); //hämta ut id på den som är inloggad och lägg in det i validData parameter user_id
+
+	console.log(validData);
 
 	try {
 		const album = await new models.Album(validData).save();
@@ -116,7 +167,7 @@ const getAlbum = async (req, res) => {
 
 
 module.exports = {
-    getAlbum,
+    getAlbums,
 	showAlbum,
 	storeAlbum,
 	updateAlbum,

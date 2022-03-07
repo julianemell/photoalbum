@@ -3,7 +3,7 @@
  */
 
 module.exports = (bookshelf) => {
-	return bookshelf.model('Album', {
+	return bookshelf.model('Albums', {
 		tableName: 'Album',
 		user() {
 			return this.belongsTo('User'); 
@@ -11,5 +11,5 @@ module.exports = (bookshelf) => {
 		photos() {
 			return this.belongsToMany('Photos');
 		}
-	});
+	})
 };
