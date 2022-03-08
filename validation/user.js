@@ -4,7 +4,7 @@ const { body } = require('express-validator');
 const models = require('../models');
 
 const createRules = [
-    body('email').exists().isString().isEmail().trim().isLength({min: 3}).custom(async value => {
+    body('email').exists().isEmail().trim().isLength({min: 3}).custom(async value => {
         //get the email and if the email already exists - reject
         const user = await new models.User({ email: value }).fetch({ require: false });
         if (user) {

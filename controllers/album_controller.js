@@ -7,44 +7,36 @@ const { matchedData, validationResult } = require('express-validator');
  * GET /
  */
 const getAlbums = async (req, res) => {
-	const user = await User({ id: req.params.usersId }).fetch( { withRelated: ['albums'] });
-
-	//const user = await User.fetchById(req.users.user_id, { withRelated: ['albums'] });
-	//const all_albums = await models.Album.fetchAll();
-	
 	try {
-		const albums = user.related('albums');
-		res.status(200).send({
+		const validData = matchedData(req);
+		validData.user_id = req.user.get('id');
+
+		const albums = await new Album({ user_id: validData.user_id }).fetch({ require: false });
+
+		if(!albums) {
+			res.send({
+				status: 'fail',
+				data: 'cant find albums'
+			})
+			return;	
+		}
+		res.send({
 			status: 'success',
-			data: albums
-		});
+			data: albums,
+		})
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when getting the albums.',
+			message: 'Exception thrown in database when trying to show album.',
 		});
-
 		throw error;
 	}
-}	
-/* // get only the validated data from the request
-const validData = matchedData(req);
+}
 
-validData.userId = req.user.get('id');
-
-//await req.user.load(['albums']);
-const usersAlbums = await new models.Album(validData).save();
-
-res.status(200).send({
-	status: 'success',
-	data: {
-		album: user.related,
-	},
-}); */
 
 
 /**
- * Get a specific album
+ * Get a specific album for the user
  * GET /:albumId
  */
 const showAlbum = async (req, res) => {

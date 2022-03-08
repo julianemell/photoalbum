@@ -7,42 +7,30 @@ const { matchedData, validationResult } = require('express-validator');
  * GET /
  */
 const getPhotos = async (req, res) => {
-	console.log('inloggad användares id:', req.user.id);
-
-	const validData = matchedData(req);
-	validData.user_id = req.user.get('id');
-
-	console.log('inloggad användares id igen:', validData.user_id);
-
-
-	const user = await User.fetchById(validData.user_id);
-	//const all_photos = await Photos.fetchAll();
-	console.log('hur ser usern ut:', user.related('photos'));
-	
 	try {
-		const photos = user.related('photos');
-		res.status(200).send({
+		const validData = matchedData(req);
+		validData.user_id = req.user.get('id');
+
+		const photos = await new Photos({ user_id: validData.user_id }).fetch({ require: false });
+
+		if(!photos) {
+			res.send({
+				status: 'fail',
+				data: 'cant find photos'
+			})
+			return;	
+		}
+		res.send({
 			status: 'success',
-			data: photos
+			data: photos,
 		});
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when getting the photos.',
+			message: 'Exception thrown in database when trying to show photos.',
 		});
-
 		throw error;
 	}
-/* 
-	const all_photos = await models.Photos.fetchAll();
-
-	res.send({
-		status: 'success',
-		data: {
-			photos: all_photos,
-		}
-	});
-	 */
 }
 
 /**
