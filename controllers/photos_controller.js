@@ -42,7 +42,8 @@ const showPhoto = async (req, res) => {
 	try {
 		const validData = matchedData(req);
 		validData.user_id = req.user.get('id');
-		console.log('är detta fotots id?:', req.params.photoId)
+		console.log('är detta fotots id?:', req.params.photoId);
+
 		const photo = await new Photos({ id: req.params.photoId, user_id: validData.user_id }).fetch({ require: false });
 
 		if(!photo) {
@@ -72,25 +73,29 @@ const showPhoto = async (req, res) => {
  * POST /
  */
 
-//eller ska denna vara i album_controller?
 const storePhoto = async (req, res) => {
+	
+	//hämta användarens id
+	const validData = matchedData(req);
+	validData.user_id = req.user.get('id');
+
+	//användarens foton
+	//const photos = await new Photos({ user_id: validData.user_id }).fetch({ require: false });
+
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: 'fail', data: errors.array() });
 	}
 
-	// get only the validated data from the request
-	const validData = matchedData(req);
-
 	// lazy-load book relationship
 	await req.user.load('photos');
 
-	// get the user's books
-	const photos = req.user.related('photos');
+	// get the user's photos
+	const userPhotos = req.user.related('photos');
 
 	// check if book is already in the user's list of books
-	const existing_photo = photos.find(photo => photo.id == validData.photo_id);
+	const existing_photo = userPhotos.find(photo => photo.id == validData.photo_id);
 
 	// if it already exists, bail
 	if (existing_photo) {
@@ -101,12 +106,18 @@ const storePhoto = async (req, res) => {
 	}
 
 	try {
-		const result = await req.user.photos().attach(validData.photo_id);
-		debug("Added photo to user successfully: %O", result);
+		const photo = await new Photos(validData).save();
+		debug("Added photo to user successfully: %O", photo);
 
 		res.send({
 			status: 'success',
-			data: null,
+			data: {
+				title: photo.get('title'),
+				url: photo.get('url'),
+				comment: photo.get('comment'),
+				user_id: req.user.get('id'),
+				
+			},
 		});
 
 	} catch (error) {
