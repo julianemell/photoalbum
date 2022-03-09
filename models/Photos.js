@@ -16,8 +16,8 @@ module.exports = (bookshelf) => {
 		albums() {
 			return this.belongsToMany('Album');
 		}
-	}, { fetchById(id, fetchOptions = {}) {
-			return new this({ id }).fetch(fetchOptions);
+	}, { async fetchById(id, fetchOptions = {}) {
+			return await new this({ id }).fetch(fetchOptions);
 		}
 	});
 };

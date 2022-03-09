@@ -78,26 +78,9 @@ const showAlbum = async (req, res) => {
 	console.log("här har vi validData:", validData);
 
 	// check for any validation errors
-	/* const errors = validationResult(req);
+	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: 'fail', data: errors.array() });
-	} */
-
-	// lazy-load relationship
-	await req.user.load('albums');
-
-	// get the user's photos
-	const userAlbums = req.user.related('albums');
-
-	// check if book is already in the user's list of books
-	const existing_album = userAlbums.find(albums => albums.id == validData.album_id);
-
-	// if it already exists, bail
-	if (existing_album) {
-		return res.send({
-			status: 'fail',
-			data: 'Album already exists.',
-		});
 	}
 
 	try {
@@ -107,7 +90,7 @@ const showAlbum = async (req, res) => {
 		res.send({
 			status: 'success',
 			data: {
-				title: albums.get('title'),
+				title: album.get('title'),
 				user_id: req.user.get('id'),
 			},
 		});
@@ -115,7 +98,7 @@ const showAlbum = async (req, res) => {
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when adding a photo to a user.',
+			message: 'Exception thrown in database when adding a album to a user.',
 		});
 		throw error;
 	}
