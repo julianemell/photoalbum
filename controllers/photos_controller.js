@@ -88,13 +88,13 @@ const storePhoto = async (req, res) => {
 		return res.status(422).send({ status: 'fail', data: errors.array() });
 	}
 
-	// lazy-load book relationship
-	await req.user.load('photos');
+	// lazy-load relationship
+	//await req.user.load('photos');
 
 	// get the user's photos
-	const userPhotos = req.user.related('photos');
+	//const userPhotos = req.user.related('photos');
 
-	// check if book is already in the user's list of books
+	/* // check if photo is already in the user's list of photos
 	const existing_photo = userPhotos.find(photo => photo.id == validData.photo_id);
 
 	// if it already exists, bail
@@ -103,7 +103,7 @@ const storePhoto = async (req, res) => {
 			status: 'fail',
 			data: 'Photo already exists.',
 		});
-	}
+	} */
 
 	try {
 		const photo = await new Photos(validData).save();

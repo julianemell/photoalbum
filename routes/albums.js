@@ -10,7 +10,7 @@ router.get('/', albumValidationRules.createRules, albumController.getAlbums);
 router.get('/:albumId', albumController.showAlbum);
 
 /* Store a new album */
-//router.post('/', albumValidationRules.createRules, albumController.storeAlbum);
+router.post('/', albumValidationRules.createRules, albumController.storeAlbum);
 
 /* Update a specific album */
 //router.put('/:albumId', albumValidationRules.updateRules, albumController.updateAlbum);

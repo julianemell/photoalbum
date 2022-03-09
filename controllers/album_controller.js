@@ -72,33 +72,50 @@ const showAlbum = async (req, res) => {
  * POST /
  */
  const storeAlbum = async (req, res) => {
+	//hämta användarens id
+	const validData = matchedData(req);
+	validData.user_id = req.user.get('id');
+	console.log("här har vi validData:", validData);
+
 	// check for any validation errors
-	const errors = validationResult(req);
+	/* const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: 'fail', data: errors.array() });
+	} */
+
+	// lazy-load relationship
+	await req.user.load('albums');
+
+	// get the user's photos
+	const userAlbums = req.user.related('albums');
+
+	// check if book is already in the user's list of books
+	const existing_album = userAlbums.find(albums => albums.id == validData.album_id);
+
+	// if it already exists, bail
+	if (existing_album) {
+		return res.send({
+			status: 'fail',
+			data: 'Album already exists.',
+		});
 	}
 
-	// get only the validated data from the request
-	const validData = matchedData(req);
-
-	//
-	validData.user_id = req.user.get('id'); //hämta ut id på den som är inloggad och lägg in det i validData parameter user_id
-
-	console.log(validData);
-
 	try {
-		const album = await new models.Album(validData).save();
-		debug("Created new album successfully: %O", album);
+		const album = await new Album(validData).save();
+		debug("Added album to user successfully: %O", album);
 
 		res.send({
 			status: 'success',
-			data: album,
+			data: {
+				title: albums.get('title'),
+				user_id: req.user.get('id'),
+			},
 		});
 
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when creating a new album.',
+			message: 'Exception thrown in database when adding a photo to a user.',
 		});
 		throw error;
 	}
