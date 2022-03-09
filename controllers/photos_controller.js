@@ -1,15 +1,21 @@
 const debug = require('debug')('photoalbum:photos_controller');
 const { User, Photos } = require('../models');
 const { matchedData, validationResult } = require('express-validator');
+const Album = require('../models/Album');
 
 /**
  * Get all photos
  * GET /
  */
 const getPhotos = async (req, res) => {
+	const validData = matchedData(req);
+	validData.user_id = req.user.get('id');
+	//console.log(req.user.id);
+
 	try {
-		const validData = matchedData(req);
-		validData.user_id = req.user.get('id');
+		//const user = await User.fetchById(req.user.id, { withRelated: ['photos']});
+		//const photos = user.related('photos');
+		//console.log("är detta alla foton?", photos);
 
 		const photos = await new Photos({ user_id: validData.user_id }).fetch({ require: false });
 
@@ -20,6 +26,7 @@ const getPhotos = async (req, res) => {
 			})
 			return;	
 		}
+
 		res.send({
 			status: 'success',
 			data: photos,
@@ -27,9 +34,10 @@ const getPhotos = async (req, res) => {
 	} catch (error) {
 		res.status(500).send({
 			status: 'error',
-			message: 'Exception thrown in database when trying to show photos.',
+			message: 'No photos found',
 		});
-		throw error;
+		//throw error;
+		return;
 	}
 }
 
@@ -134,12 +142,14 @@ const storePhoto = async (req, res) => {
  * PUT /:photosId
  */
  const updatePhoto = async (req, res) => {
-	const photosId = req.params.photosId;
+	const photoId = req.params.photosId;
+	const validData = matchedData(req);
+	validData.user_id = req.user.get('id');
 
-	// make sure example exists
-	const photo = await new models.Photo({ id: photosId }).fetch({ require: false });
+	// make sure album exists
+	const photo = await new Photos({ id: req.params.photoId, user_id: validData.user_id }).fetch({ require: false });
 	if (!photo) {
-		debug("Photo to update was not found. %o", { id: photosId });
+		debug("Photo to update was not found. %o", { id: photoId });
 		res.status(404).send({
 			status: 'fail',
 			data: 'Photo Not Found',
@@ -152,9 +162,6 @@ const storePhoto = async (req, res) => {
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: 'fail', data: errors.array() });
 	}
-
-	// get only the validated data from the request
-	const validData = matchedData(req);
 
 	try {
 		const updatedPhoto = await photo.save(validData);
@@ -180,4 +187,5 @@ module.exports = {
 	showPhoto,
 	storePhoto,
 	updatePhoto,
+	
 }
