@@ -1,6 +1,4 @@
-/**
- * Album model
- */
+//ALBUM MODEL
 
 module.exports = (bookshelf) => {
 	return bookshelf.model('Albums', {

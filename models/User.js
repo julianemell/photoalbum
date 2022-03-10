@@ -1,7 +1,4 @@
-/**
- * Profile model
- */
-
+//USER MODEL
 
 module.exports = (bookshelf) => {
 	return bookshelf.model('User', {

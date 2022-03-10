@@ -1,6 +1,4 @@
-/**
- * Photos model
- */
+//PHOTOS MODEL
 
 module.exports = (bookshelf) => {
 	return bookshelf.model('Photos', {

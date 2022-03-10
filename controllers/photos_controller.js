@@ -12,10 +12,6 @@ const getPhotos = async (req, res) => {
 	//console.log(req.user.id);
 
 	try {
-		//const user = await User.fetchById(req.user.id, { withRelated: ['photos']});
-		//const photos = user.related('photos');
-		//console.log("är detta alla foton?", photos);
-
 		const photos = await new Photos({ user_id: validData.user_id }).fetch({ require: false });
 
 		if(!photos) {
