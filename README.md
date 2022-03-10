@@ -1,13 +1,13 @@
 # photoalbum
-POST /register
--			-
+POST /register <br>
+<br>
 GET /albums <br>
-GET /albums/:albumsId
-POST /albums
-PUT /albums
-POST /albums/:albumsId/photos
--			-
-GET /photos
-GET /photos/:photosId
-POST /photos
-PUT /photos
+GET /albums/:albumsId <br>
+POST /albums <br>
+PUT /albums <br>
+POST /albums/:albumsId/photos <br>
+<br>
+GET /photos <br>
+GET /photos/:photosId <br>
+POST /photos <br>
+PUT /photos <br>
