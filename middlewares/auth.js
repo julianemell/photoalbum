@@ -5,8 +5,6 @@ const { User } = require('../models/');
 const bcrypt = require('bcrypt');
 
 const basic = async (req, res, next) => {
-    debug("Hello");
-
     if (!req.headers.authorization) {
         debug("Authorization header missing");
 
@@ -16,9 +14,7 @@ const basic = async (req, res, next) => {
         });
     }
 
-    debug("Authorization header: %o", req.headers.authorization);
-
-    const [authSchema, base64Payload] = req.headers.authorization.split(' ');
+	const [authSchema, base64Payload] = req.headers.authorization.split(' ');
 
     if (authSchema.toLowerCase() !== "basic") {
         debug("Authorization schema isn't basic");
@@ -53,7 +49,7 @@ const basic = async (req, res, next) => {
 
     req.user = user;
 
-   next();
+	next();
 }
 
 module.exports = {
