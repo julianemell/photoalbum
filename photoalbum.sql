@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Värd: localhost:8889
--- Tid vid skapande: 10 mars 2022 kl 10:09
+-- Tid vid skapande: 10 mars 2022 kl 18:13
 -- Serverversion: 5.7.34
 -- PHP-version: 7.4.21
 
@@ -45,7 +45,8 @@ INSERT INTO `Album` (`id`, `user_id`, `title`) VALUES
 (5, 9, 'Confetti Album now has this name'),
 (6, 10, 'Julias Album'),
 (7, 10, 'Julias andra Album'),
-(8, 10, 'Julias third Album');
+(8, 10, 'Julias third Album'),
+(9, 10, 'Ett till album');
 
 -- --------------------------------------------------------
 
@@ -160,7 +161,7 @@ ALTER TABLE `Users`
 -- AUTO_INCREMENT för tabell `Album`
 --
 ALTER TABLE `Album`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT för tabell `Album_Photos`
