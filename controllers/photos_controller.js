@@ -1,10 +1,9 @@
 const debug = require('debug')('photoalbum:photos_controller');
 const { User, Photos } = require('../models');
 const { matchedData, validationResult } = require('express-validator');
-const Album = require('../models/Album');
 
 /**
- * Get all photos
+ * Get all photos - funkar ej
  * GET /
  */
 const getPhotos = async (req, res) => {
@@ -42,15 +41,14 @@ const getPhotos = async (req, res) => {
 }
 
 /**
- * Get a specific photo
  *
+ * Get a specific photo
  * GET /:photosId
  */
 const showPhoto = async (req, res) => {
 	try {
 		const validData = matchedData(req);
 		validData.user_id = req.user.get('id');
-		console.log('är detta fotots id?:', req.params.photoId);
 
 		const photo = await new Photos({ id: req.params.photoId, user_id: validData.user_id }).fetch({ require: false });
 
@@ -63,7 +61,12 @@ const showPhoto = async (req, res) => {
 		}
 		res.send({
 			status: 'success',
-			data: photo,
+			data: {
+				id: photo.get('id'),
+				title: photo.get('title'),
+				url: photo.get('url'),
+				comment: photo.get('comment'),
+			}
 		})
 	} catch (error) {
 		res.status(500).send({
@@ -76,42 +79,21 @@ const showPhoto = async (req, res) => {
 
 
 /**
- * Store a new photo
  *
+ * Store a new photo
  * POST /
  */
 
 const storePhoto = async (req, res) => {
-	
 	//hämta användarens id
 	const validData = matchedData(req);
 	validData.user_id = req.user.get('id');
-
-	//användarens foton
-	//const photos = await new Photos({ user_id: validData.user_id }).fetch({ require: false });
 
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: 'fail', data: errors.array() });
 	}
-
-	// lazy-load relationship
-	//await req.user.load('photos');
-
-	// get the user's photos
-	//const userPhotos = req.user.related('photos');
-
-	/* // check if photo is already in the user's list of photos
-	const existing_photo = userPhotos.find(photo => photo.id == validData.photo_id);
-
-	// if it already exists, bail
-	if (existing_photo) {
-		return res.send({
-			status: 'fail',
-			data: 'Photo already exists.',
-		});
-	} */
 
 	try {
 		const photo = await new Photos(validData).save();
@@ -124,7 +106,7 @@ const storePhoto = async (req, res) => {
 				url: photo.get('url'),
 				comment: photo.get('comment'),
 				user_id: req.user.get('id'),
-				
+				id: photo.get('id'),
 			},
 		});
 
@@ -137,8 +119,8 @@ const storePhoto = async (req, res) => {
 	}
 }
 /**
- * Update a specific photo
  *
+ * Update a specific photo
  * PUT /:photosId
  */
  const updatePhoto = async (req, res) => {
@@ -146,7 +128,7 @@ const storePhoto = async (req, res) => {
 	const validData = matchedData(req);
 	validData.user_id = req.user.get('id');
 
-	// make sure album exists
+	// make sure photo exists
 	const photo = await new Photos({ id: req.params.photoId, user_id: validData.user_id }).fetch({ require: false });
 	if (!photo) {
 		debug("Photo to update was not found. %o", { id: photoId });
@@ -187,5 +169,4 @@ module.exports = {
 	showPhoto,
 	storePhoto,
 	updatePhoto,
-	
 }

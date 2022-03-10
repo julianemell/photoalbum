@@ -2,8 +2,9 @@ const debug = require('debug')('photoalbum:album_controller');
 const { Album, User } = require('../models');
 const { matchedData, validationResult } = require('express-validator');
 
+
 /**
- * Get all albums
+ * Get all albums - funkar ej
  * GET /
  */
 const getAlbums = async (req, res) => {
@@ -42,6 +43,8 @@ const getAlbums = async (req, res) => {
   });
 
  */
+
+
 /**
  * Get a specific album for the user
  * GET /:albumId
@@ -74,8 +77,8 @@ const showAlbum = async (req, res) => {
 
 
 /**
- * Store a new album
  *
+ * Store a new album
  * POST /
  */
  const storeAlbum = async (req, res) => {
@@ -97,6 +100,7 @@ const showAlbum = async (req, res) => {
 		res.send({
 			status: 'success',
 			data: {
+				id: album.get('id'),
 				title: album.get('title'),
 				user_id: req.user.get('id'),
 			},
@@ -112,8 +116,8 @@ const showAlbum = async (req, res) => {
 }
 
 /**
- * Update a specific album
  *
+ * Update a specific album
  * PUT /:albumId
  */
  const updateAlbum = async (req, res) => {
@@ -158,16 +162,38 @@ const showAlbum = async (req, res) => {
 
 
 /**
- * Add photo to album
  *
+ * Add photo to album - säger success men det läggs inte till.
  * POST /:albumId/photos
  */
-/* 
+
 const addPhotoToAlbum = async (req, res) => {
 	const validData = matchedData(req);
 	validData.user_id = req.user.get('id');
 
-	console.log(photos.related('albums').toJSON());
+	try {
+		//plocka ut albumet
+		const album = await new Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
+
+		//ta photo_id och lägg till i validData, som en relation
+		await album.photos().attach(validData.photo_id);
+		//debug("Added photo to album successfully: %o", result);
+		await album.related('photos').fetch();
+		res.send({
+			status: 'success',
+			data: album,
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Exception thrown in database when adding a photo to an album.',
+		});
+		throw error;
+	}
+}
+
+/* 
+	//console.log(photos.related('albums').toJSON());
 	//relationen
 	const user = await User.fetchById(req.user.id, { withRelated: ['albums'] });
 	//relationen
@@ -218,5 +244,5 @@ module.exports = {
 	showAlbum,
 	storeAlbum,
 	updateAlbum,
-	//addPhotoToAlbum,
+	addPhotoToAlbum,
 }

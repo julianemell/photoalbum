@@ -18,6 +18,6 @@ const createRules = [
 ];
 
 
-module.exports = { //dessa nås i userValidationRules i routes/profile
+module.exports = {
     createRules,
 }
