@@ -1,7 +1,7 @@
 # photoalbum
 POST /register
 -			-
-GET /albums
+GET /albums <br>
 GET /albums/:albumsId
 POST /albums
 PUT /albums
