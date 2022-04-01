@@ -2,15 +2,11 @@
 
 module.exports = (bookshelf) => {
 	return bookshelf.model('Photos', {
-		tableName: 'Photos',
-		initialize() {
-			this.on('destroying', (model) => {
-			   model.albums().detach();
-			})
-		},
+		tableName: 'photos',
 		albums() {
 			return this.belongsToMany('Album');
 		},
+		tableName: 'photos',
 		user() {
 			return this.belongsTo('User');
 		}

@@ -2,20 +2,18 @@
 
 module.exports = (bookshelf) => {
 	return bookshelf.model('User', {
-		tableName: 'Users',
+		tableName: 'user',
 		photos() {
 			return this.hasMany('Photos');
 		},
+		tableName: 'user',
 		albums() {
 			return this.hasMany('Album');
 		}
-	}, { 
-		async fetchById(id, fetchOptions = {}) {
-			return await new this({ id }).fetch(fetchOptions);
-		},
-		async login(username, password) {
+	}, {
+		async login(email, password) {
 			// find user based on the username (bail if no such user exists)
-			const user = await new this({ username }).fetch({ require: false });
+			const user = await new this({ email }).fetch({ require: false });
 			if (!user) {
 				return false;
 			}
@@ -30,6 +28,9 @@ module.exports = (bookshelf) => {
 
 			// all is well, return user
 			return user;
-		}
+		},
+			async fetchById(id, fetchOptions = {}) {
+				return await new this({ id }).fetch(fetchOptions);
+			}
 	});
 }

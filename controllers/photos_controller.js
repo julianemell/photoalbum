@@ -7,33 +7,13 @@ const { matchedData, validationResult } = require('express-validator');
  * GET /
  */
 const getPhotos = async (req, res) => {
-	const validData = matchedData(req);
-	validData.user_id = req.user.get('id');
-	//console.log(req.user.id);
-
-	try {
-		const photos = await new Photos({ user_id: validData.user_id }).fetch({ require: false });
-
-		if(!photos) {
-			res.send({
-				status: 'fail',
-				data: 'cant find photos'
-			})
-			return;	
+	await req.user.load('photos');
+	res.status(200).send({
+		status: 'success',
+		data: {
+			album: req.user.related('photos'),
 		}
-
-		res.send({
-			status: 'success',
-			data: photos,
-		});
-	} catch (error) {
-		res.status(500).send({
-			status: 'error',
-			message: 'No photos found',
-		});
-		//throw error;
-		return;
-	}
+	});
 }
 
 /**

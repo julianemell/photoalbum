@@ -4,7 +4,7 @@ const albumController = require('../controllers/album_controller');
 const albumValidationRules = require('../validation/album');
 
 /* Get all album */
-router.get('/', albumValidationRules.createRules, albumController.getAlbums);
+router.get('/', albumController.getAlbums);
 
 /* Get a specific album */
 router.get('/:albumId', albumController.showAlbum);

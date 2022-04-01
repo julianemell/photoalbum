@@ -1,5 +1,5 @@
 const debug = require('debug')('photoalbum:album_controller');
-const { Album, User } = require('../models');
+const models = require('../models');
 const { matchedData, validationResult } = require('express-validator');
 
 
@@ -8,32 +8,13 @@ const { matchedData, validationResult } = require('express-validator');
  * GET /
  */
 const getAlbums = async (req, res) => {
-	try {
-		const validData = matchedData(req);
-		validData.user_id = req.user.get('id');
-
-		const albums = await new Album({ user_id: validData.user_id }).fetch({ require: false });
-
-		if(!albums) {
-			res.send({
-				status: 'fail',
-				data: 'cant find albums'
-			})
-			return;	
+	await req.user.load('albums');
+	res.status(200).send({
+		status: 'success',
+		data: {
+			album: req.user.related('albums'),
 		}
-		res.send({
-			status: 'success',
-			data: {
-				album: albums,
-			}
-		});
-	} catch (error) {
-		res.status(500).send({
-			status: 'error',
-			message: 'Exception thrown in database when trying to show album.',
-		});
-		throw error;
-	}
+	});
 }
 
 

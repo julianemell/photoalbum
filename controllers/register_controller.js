@@ -44,8 +44,9 @@ const register = async (req, res) => {
         res.send({
             status: 'success',
             data: { //visa endast name och username
-                name: user.get('first_name') + ' ' + user.get('last_name'),
-                username: user.get('email'),
+                email: user.get('email'),
+                first_name: user.get('first_name'),
+				last_name: user.get('last_name'),
             }
         });
 
