@@ -142,19 +142,39 @@ const showAlbum = async (req, res) => {
 
 const addPhotoToAlbum = async (req, res) => {
 	const validData = matchedData(req);
-	validData.user_id = req.user.get('id');
+	/* validData.user_id = req.user.get('id'); */
 
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).send({ status: 'fail', data: errors.array() });
+	}
+
+	//hitta alla foton och album kopplade till user
+	await req.user.load('photos');
+	await req.user.load('albums');
+
+	//hämta fotot samt album som tillhör usern
+	let userPhotos = req.user.related('photos');
+	let userAlbums = req.user.related('albums');
+
+	let userPhoto = userPhotos.find((photos) => photos.id == validData.photo_id); //fotot vi vill lägga till
+	let userAlbum = userAlbums.find((album) => album.id == req.params.albumId); //albumId kommer från url, albumet vi vill lägga till fotot i
+
+	//om det inte är userns foto eller album
+	if (!userPhoto && !userAlbum) {
+		return res.status(404).send({
+			status: 'fail',
+			data: 'The album and/or photo doesnt belong to you',
+		});
+	}
+
+	//testa att lägga till fotot i albumet
 	try {
-		//plocka ut albumet
-		const album = await new Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
-		console.log("validdata?", validData.photo_id);
-		//ta photo_id och lägg till i validData, som en relation
-		await album.photos().attach(validData.photo_id);
-		//debug("Added photo to album successfully: %o", result);
-		await album.related('photos').fetch();
+		await userAlbum.photos().attach(validData.photo_id);
+
 		res.send({
 			status: 'success',
-			data: album,
+			data: null,
 		});
 	} catch (error) {
 		res.status(500).send({
