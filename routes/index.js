@@ -16,7 +16,6 @@ router.get('/', (req, res, next) => {
 //POST
 router.post('/register', userValidationRules.createRules, registerController.register);
 
-//här måste man gå genom auth för att komma in
 router.use('/albums', auth.basic, require('./albums'));
 router.use('/photos', auth.basic, require('./photos'));
 

@@ -141,7 +141,6 @@ const showAlbum = async (req, res) => {
 
 const addPhotoToAlbum = async (req, res) => {
 	const validData = matchedData(req);
-	/* validData.user_id = req.user.get('id'); */
 
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
