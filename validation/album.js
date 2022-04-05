@@ -19,7 +19,19 @@ const updateRules = [
     body('title').optional().isLength({min: 3})
 ];
 
+const addPhotoToAlbumRules = [
+	body('photo_id').exists().custom(async (value) => {
+		const photo = await new models.Photos({ id: value }).fetch({ require: false });
+
+		if (!photo) {
+			return Promise.reject(`Photo with ID ${value} does not exist.`);
+		}
+		return Promise.resolve();
+	})
+]
+
 module.exports = {
     createRules,
     updateRules,
+	addPhotoToAlbumRules,
 }

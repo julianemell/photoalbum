@@ -26,7 +26,7 @@ const showAlbum = async (req, res) => {
 	try {
 		const validData = matchedData(req);
 		validData.user_id = req.user.get('id');
-		const album = await new Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
+		const album = await new models.Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
 
 		if(!album) {
 			res.send({
@@ -58,7 +58,6 @@ const showAlbum = async (req, res) => {
 	//hämta användarens id
 	const validData = matchedData(req);
 	validData.user_id = req.user.get('id');
-	console.log("här har vi validData:", validData);
 
 	// check for any validation errors
 	const errors = validationResult(req);
@@ -67,7 +66,7 @@ const showAlbum = async (req, res) => {
 	}
 
 	try {
-		const album = await new Album(validData).save();
+		const album = await new models.Album(validData).save();
 		debug("Added album to user successfully: %O", album);
 
 		res.send({
@@ -99,7 +98,7 @@ const showAlbum = async (req, res) => {
 	validData.user_id = req.user.get('id');
 
 	// make sure album exists
-	const album = await new Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
+	const album = await new models.Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
 	if (!album) {
 		debug("Album to update was not found. %o", { id: albumId });
 		res.status(404).send({
@@ -157,7 +156,7 @@ const addPhotoToAlbum = async (req, res) => {
 	let userPhotos = req.user.related('photos');
 	let userAlbums = req.user.related('albums');
 
-	let userPhoto = userPhotos.find((photos) => photos.id == validData.photo_id); //fotot vi vill lägga till
+	let userPhoto = userPhotos.find((photo) => photo.id == validData.photo_id); //fotot vi vill lägga till
 	let userAlbum = userAlbums.find((album) => album.id == req.params.albumId); //albumId kommer från url, albumet vi vill lägga till fotot i
 
 	//om det inte är userns foto eller album
@@ -181,7 +180,7 @@ const addPhotoToAlbum = async (req, res) => {
 			status: 'error',
 			message: 'Exception thrown in database when adding a photo to an album.',
 		});
-		throw error;
+	throw error;
 	}
 }
 

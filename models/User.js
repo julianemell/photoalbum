@@ -28,9 +28,6 @@ module.exports = (bookshelf) => {
 
 			// all is well, return user
 			return user;
-		},
-			async fetchById(id, fetchOptions = {}) {
-				return await new this({ id }).fetch(fetchOptions);
-			}
+		}
 	});
 }
