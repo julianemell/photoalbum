@@ -26,7 +26,7 @@ const showAlbum = async (req, res) => {
 	try {
 		const validData = matchedData(req);
 		validData.user_id = req.user.get('id');
-		const album = await new models.Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ require: false });
+		const album = await new models.Album({ id: req.params.albumId, user_id: validData.user_id }).fetch({ withRelated: ['photos']});
 
 		if(!album) {
 			res.send({
